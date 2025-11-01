@@ -1,0 +1,6 @@
+local button = script.Parent
+local weapon = "Machete"
+local ChangeWeapon = game.ReplicatedStorage:WaitForChild("ChangeWeapon")
+button.Activated:Connect(function()
+	ChangeWeapon:FireServer(weapon)
+end)
