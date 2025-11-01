@@ -1,0 +1,42 @@
+local module = {
+	action = function(player,objectName)
+		local rep = game:GetService("ReplicatedStorage")
+		local object = rep.Weapons:FindFirstChild(objectName):Clone()
+		local playerFolder = workspace.PlayerFolders:FindFirstChild(player.Name)
+		local ValuesFold = playerFolder:FindFirstChild("Values")
+		local thrownIn = ValuesFold:FindFirstChild("Thrown")
+		local levitatingIn = ValuesFold:FindFirstChild("Levitating")
+	   local speedToReachTop = 1
+	   levitatingIn.Value = true
+		local runservice = game:GetService("RunService")
+		object.Parent = workspace.PlayerFolders:FindFirstChild(player.Name):FindFirstChild("Weapons")
+		object.Position = player.Character.HumanoidRootPart.Position + Vector3.new(0,3.5,0)
+		local objPos = object.Position
+		object.CanCollide = false
+		object.Anchored = true
+		local PeakHeight = object.Position + Vector3.new(0,7,0)
+		local OppositeOri = object.Orientation + Vector3.new(0,180,0)
+		local TweenService = game:GetService("TweenService")
+		local tweenInfo = TweenInfo.new(
+			speedToReachTop,
+			Enum.EasingStyle.Sine,
+			Enum.EasingDirection.Out
+		)
+		local tween = TweenService:Create(object, tweenInfo, {Position = PeakHeight, Orientation = OppositeOri})
+		task.spawn(function()
+		tween:Play()
+		end)
+		local thrownEvent = nil
+		thrownEvent = runservice.Heartbeat:Connect(function()
+			local thrown = thrownIn.Value
+			local levitating = levitatingIn.Value
+			print("Running")
+			if thrown == true or levitating == false then
+				tween:Cancel()
+				thrownEvent:Disconnect()
+			end
+		end)
+	end,
+}
+
+return module
