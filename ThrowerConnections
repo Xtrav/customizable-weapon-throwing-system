@@ -1,0 +1,6 @@
+local rep = game:GetService("ReplicatedStorage")
+local connection = rep:FindFirstChild("SendConnection")
+connection.OnServerEvent:Connect(function(player,objectName,Namemodule,mousePos)
+	local module = require(rep:FindFirstChild(Namemodule))
+	module.action(player,objectName,mousePos)
+end)
