@@ -1,0 +1,68 @@
+local module = {
+	
+	action = function(player,objectName,mousePos)
+		print("started")
+		local playerFold = workspace.PlayerFolders:FindFirstChild(player.Name)
+		local valuesFold = playerFold:FindFirstChild("Values")
+		local thrown = valuesFold:FindFirstChild("Thrown")
+		local weaponsFold = playerFold:FindFirstChild("Weapons")
+		local weapon = weaponsFold:GetChildren()
+		local levitating = valuesFold:FindFirstChild("Levitating")
+		local TweenService = game:GetService("TweenService")
+		local endPoint = Instance.new("Part",playerFold)
+		local weaponInst = {}
+		print("a")
+		endPoint.Position = mousePos 
+		endPoint.CanCollide = false
+		endPoint.Anchored = true
+		endPoint.Transparency = 1
+		levitating.Value = false
+		thrown.Value = true
+		for i,object in pairs(weapon) do
+			if object and i < 50 then
+			print("b")
+			local wind = game.ReplicatedStorage.Fx.Wind:Clone()
+			wind.Parent = object
+			object.Anchored = true
+			object.CanCollide = false
+				local speed = 65
+
+				local distance = (object.Position - mousePos).Magnitude
+				local speedTime = distance / speed
+				local cf = CFrame.new(object.Position, endPoint.Position)
+
+				-- Convert to Euler angles (radians → degrees)
+				local x, y, z = cf:ToOrientation()
+				local Ori = Vector3.new(math.deg(x), math.deg(y), math.deg(z)) + Vector3.new(90,0,180)
+			object.Orientation = Ori
+			local tweenInfo = TweenInfo.new(
+				speedTime,
+				Enum.EasingStyle.Linear,
+				Enum.EasingDirection.InOut
+			)
+			print("c")
+			local tween = TweenService:Create(object, tweenInfo, {Position = endPoint.Position, Orientation = Ori + Vector3.new(0,0,0)})
+			print("d")
+			task.spawn(function()
+				table.insert(weaponInst, object)
+				print("played")
+				tween:Play()
+			end)
+			print("E")
+			tween.Completed:Once(function()
+			wind:Destroy()
+			end)
+			end
+		end
+		task.wait(3)
+		thrown.Value = false
+		print("F")
+		for i,v in pairs(weaponInst) do
+			v:Destroy()
+			endPoint:Destroy()
+		end
+		print("G")
+end,
+}
+
+return module
