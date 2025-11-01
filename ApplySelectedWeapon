@@ -1,0 +1,6 @@
+local rep = game:GetService("ReplicatedStorage")
+local event = rep:WaitForChild("ChangeWeapon")
+event.OnServerEvent:Connect(function(player,weapon)
+	local selectedWeaponInst= workspace.PlayerFolders:WaitForChild(player.Name):WaitForChild("Values"):WaitForChild("SelectedWeapon")
+	selectedWeaponInst.Value = weapon
+end)
