@@ -1,0 +1,57 @@
+local player = game.Players.LocalPlayer
+local mouse = player:GetMouse()
+local input = game:GetService("UserInputService")
+local rep = game:GetService("ReplicatedStorage")
+local connecter = rep:WaitForChild("SendConnection")
+local cooldown = false
+local cooldownTimer = 5 
+local currentlyLevitating = false
+-- throw
+local function throw(SelectedObj)
+	if currentlyLevitating == true then
+	currentlyLevitating = false
+	local mousePos = mouse.Hit.Position
+		connecter:FireServer(SelectedObj,"Throw",mousePos)
+		end
+end
+-- levitate
+local function levitate(SelectedObj)
+	currentlyLevitating = true
+	connecter:FireServer(SelectedObj,"Levitate")
+end
+-- initiate
+input.InputBegan:Connect(function(inputObject, gameProcessedEvent)
+	if inputObject.KeyCode == Enum.KeyCode.One and cooldown == false and currentlyLevitating == false
+	then	
+		local SelectedObj = game.Workspace.PlayerFolders:FindFirstChild(game.Players.LocalPlayer.Name):FindFirstChild("Values"):FindFirstChild("SelectedWeapon").Value
+		task.spawn(function()
+				levitate(SelectedObj)
+		end)
+		mouse.Button1Down:Once(function()
+			if currentlyLevitating == true then
+			task.spawn(function()
+			throw(SelectedObj)
+			end)
+				cooldown = true
+				print("cooldown is on")
+			task.wait(cooldownTimer)
+			    currentlyLevitating = false
+				cooldown = false
+				print("cooldown is off")
+			end
+		end)
+	end
+end)
+-- drop
+input.InputEnded:Connect(function(inpObj)
+	if currentlyLevitating == true then
+		task.spawn(function()
+			local SelectedObj = game.Workspace.PlayerFolders:FindFirstChild(game.Players.LocalPlayer.Name):FindFirstChild("Values"):FindFirstChild("SelectedWeapon").Value
+			connecter:FireServer(SelectedObj,"Drop")
+		end)
+		currentlyLevitating = false
+		cooldown = true
+		task.wait(cooldownTimer/5)
+		cooldown = false
+	end
+end)
