@@ -1,0 +1,24 @@
+local players = game:GetService("Players")
+players.PlayerAdded:Connect(function(player)
+	local folder = Instance.new("Folder")
+	folder.Name = player.Name
+	folder.Parent = workspace.PlayerFolders
+	local miniFolder = Instance.new("Folder")
+	miniFolder.Name = "Weapons"
+	miniFolder.Parent = folder
+	local miniFolder2 = Instance.new("Folder")
+	miniFolder2.Name = "Values"
+	miniFolder2.Parent = folder
+	local throw = Instance.new("BoolValue")
+	throw.Name = "Thrown"
+	throw.Parent = miniFolder2
+	throw.Value = false
+	local levitating = Instance.new("BoolValue")
+	levitating.Name = "Levitating"
+	levitating.Parent = miniFolder2
+	levitating.Value = false
+	local selectedWep = Instance.new("StringValue")
+	selectedWep.Name = "SelectedWeapon"
+	selectedWep.Parent = miniFolder2
+	selectedWep.Value = "Axe"
+end)
