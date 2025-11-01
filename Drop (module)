@@ -1,0 +1,21 @@
+local module = {
+	action = function(player)
+		local playerFold = workspace.PlayerFolders:FindFirstChild(player.Name)
+		local object = playerFold:FindFirstChild("Weapons")
+		local valuesFold = playerFold:FindFirstChild("Values")
+		local weaponsFold = playerFold:FindFirstChild("Weapons")
+		local weapon = weaponsFold:GetChildren()
+		local levitating = valuesFold:FindFirstChild("Levitating")
+		levitating.Value = false
+		for i,object in pairs(weapon) do
+			object.Anchored = false
+			object.CanCollide = true
+			task.spawn(function()
+			task.wait(1.5)
+			object:Destroy()
+			end)
+		end
+	end,
+}
+
+return module
